@@ -33,7 +33,7 @@ download_rootfs () {
 import_rootfs () {
     local docker_like="${1:-docker}"
     local dockerfile="${2:-./Dockerfile}"
-    local os_version_id os_id
+    local os_version_id os_version_codename
     if ! "$docker_like" import - raspberrypi_os:imported; then
         error "Failed to import tarball from stdin"
         return 1
@@ -50,11 +50,11 @@ import_rootfs () {
         error "Failed to tag image with version id"
         return 1
     fi
-    if ! os_id="$("$docker_like" run raspberrypi_os:latest bash -c 'source /etc/os-release && echo "$ID"')"; then
+    if ! os_version_codename="$("$docker_like" run raspberrypi_os:latest bash -c 'source /etc/os-release && echo "$VERSION_CODENAME"')"; then
         error "Failed to retrieve id from image"
         return 1
     fi
-    if ! "$docker_like" tag raspberrypi_os:latest raspberrypi_os:"$os_id"; then
+    if ! "$docker_like" tag raspberrypi_os:latest raspberrypi_os:"$os_version_codename"; then
         error "Failed to tag image with id"
         return 1
     fi
